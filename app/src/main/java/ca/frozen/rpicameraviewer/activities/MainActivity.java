@@ -71,10 +71,26 @@ public class MainActivity extends AppCompatActivity
 			}
 		});
 		adapter.refresh();
-		ListView listView = (ListView)findViewById(R.id.cameras);
-		listView.setAdapter(adapter);
-		registerForContextMenu(listView);
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+		ListView leftListView = (ListView)findViewById(R.id.cameras_left);
+		ListView rightListView = (ListView)findViewById(R.id.cameras_right);
+
+
+		leftListView.setAdapter(adapter);
+		registerForContextMenu(leftListView);
+		leftListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+		{
+			@Override
+			public void onItemClick(AdapterView<?> adaptr, View view, int position, long id)
+			{
+				startVideoActivity(adapter.getCameras().get(position));
+			}
+		});
+
+
+		//TODO: adapter and adaptr are both defined here. Should adaptr.getCameras be used?
+		rightListView.setAdapter(adapter);
+		registerForContextMenu(rightListView);
+		rightListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
 		{
 			@Override
 			public void onItemClick(AdapterView<?> adaptr, View view, int position, long id)
@@ -306,7 +322,7 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
 	{
-		if (v.getId() == R.id.cameras)
+		if (v.getId() == R.id.cameras_left || v.getId() == R.id.cameras_right)
 		{
 			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.menu_main_list, menu);
