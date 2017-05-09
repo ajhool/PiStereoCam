@@ -71,9 +71,8 @@ public class MainActivity extends AppCompatActivity
 			}
 		});
 		adapter.refresh();
-		ListView leftListView = (ListView)findViewById(R.id.cameras_left);
-		ListView rightListView = (ListView)findViewById(R.id.cameras_right);
-
+		final ListView leftListView = (ListView)findViewById(R.id.cameras_left);
+		final ListView rightListView = (ListView)findViewById(R.id.cameras_right);
 
 		leftListView.setAdapter(adapter);
 		registerForContextMenu(leftListView);
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity
 			@Override
 			public void onItemClick(AdapterView<?> adaptr, View view, int position, long id)
 			{
-				startVideoActivity(adapter.getCameras().get(position));
+				//startVideoActivity(adapter.getCameras().get(position));
 			}
 		});
 
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity
 			@Override
 			public void onItemClick(AdapterView<?> adaptr, View view, int position, long id)
 			{
-				startVideoActivity(adapter.getCameras().get(position));
+				//startVideoActivity(adapter.getCameras().get(position));
 			}
 		});
 
@@ -123,6 +122,54 @@ public class MainActivity extends AppCompatActivity
 					startScanner();
 				}
 			}, 500);
+		}
+	}
+
+
+	/******************************************************************************
+	 * whichCamerasSelected
+	 * 	@return Integer array of camera selections. If only one camera is selected, that
+	 * 		camera will take the zeroth position. null is used to show that a camera is not selected
+	 ******************************************************************************/
+	public Integer[] whichCamerasSelected(ListView left, ListView right){
+		final Integer leftSelection = left.getCheckedItemPosition();
+		final Integer rightSelection = right.getCheckedItemPosition();
+		Integer[] selections = new Integer[2];
+
+		if(leftSelection != AdapterView.INVALID_POSITION && rightSelection != AdapterView.INVALID_POSITION) {
+			//both are selected
+			selections[0] = leftSelection;
+			selections[1] = rightSelection;
+		} else if (leftSelection != AdapterView.INVALID_POSITION){
+			//left is selected
+			selections[0] = leftSelection;
+			selections[1] = null;
+		} else if (rightSelection != AdapterView.INVALID_POSITION){
+			//right is selected
+			selections[0] = rightSelection;
+			selections[1] = null;
+		} else {
+			//No selections made, do nothing.
+			selections[0] = null;
+			selections[1] = null;
+		}
+
+		return selections;
+	}
+
+	public void startViewingActivity(ListView left, ListView right){
+		final Integer[] cameras = whichCamerasSelected(left, right);
+
+		if(cameras[0] == null && cameras[1] == null ){
+			//No cameras selected, do nothing.
+		}
+
+		if(cameras[0] != null && cameras[1] != null){
+			startStereoActivity(adapter.getCameras().get(cameras[0]), adapter.getCameras().get(cameras[1]));
+		}
+
+		if(cameras[0] != null){
+			startVideoActivity(adapter.getCameras().get(cameras[0]));
 		}
 	}
 
@@ -407,9 +454,27 @@ public class MainActivity extends AppCompatActivity
 	private void startVideoActivity(Camera camera)
 	{
 		Intent intent = new Intent(App.getContext(), VideoActivity.class);
-		intent.putExtra(VideoActivity.CAMERA, camera);
+
+		intent.putExtra(VideoActivity.CAMERA_TYPE, VideoActivity.MONO);
+		intent.putExtra(VideoActivity.CAMERA_MONO, camera);
+
 		startActivity(intent);
 	}
+
+	//******************************************************************************
+	// startStereoActivity
+	//******************************************************************************
+	private void startStereoActivity(Camera cameraLeft, Camera cameraRight)
+	{
+		Intent intent = new Intent(App.getContext(), VideoActivity.class);
+
+		intent.putExtra(VideoActivity.CAMERA_TYPE, VideoActivity.STEREO);
+		intent.putExtra(VideoActivity.CAMERA_LEFT, cameraLeft);
+		intent.putExtra(VideoActivity.CAMERA_RIGHT, cameraRight);
+
+		startActivity(intent);
+	}
+
 
 	//******************************************************************************
 	// updateCameras

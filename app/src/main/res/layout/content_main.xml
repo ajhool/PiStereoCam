@@ -30,7 +30,9 @@
             <ListView
                 android:id="@+id/cameras_left"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:choiceMode="singleChoice"
+                android:listSelector="#666666"/>
         </android.support.v7.widget.LinearLayoutCompat>
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -44,7 +46,9 @@
             <ListView
                 android:id="@+id/cameras_right"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:choiceMode="singleChoice"
+                android:listSelector="#666666"/>
         </android.support.v7.widget.LinearLayoutCompat>
     </android.support.v7.widget.LinearLayoutCompat>
 </RelativeLayout>
